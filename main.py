@@ -7,11 +7,11 @@ import streamlit as st
 #config = configparser.ConfigParser()
 #config.read('config.ini')
 
-c_sf_account = st.secrets.db_credentials.account
-c_sf_username = st.secrets.db_credentials.username
-c_sf_password = st.secrets.db_credentials.password
-c_sf_database = st.secrets.db_credentials.database
-c_sf_warehouse = st.secrets.db_credentials.warehouse
+c_sf_account = st.secrets.Snowflake.account
+c_sf_username = st.secrets.Snowflake.username
+c_sf_password = st.secrets.Snowflake.password
+c_sf_database = st.secrets.Snowflake.database
+c_sf_warehouse = st.secrets.Snowflake.warehouse
 
 
 conn = snowflake.connector.connect(
