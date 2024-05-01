@@ -1,18 +1,17 @@
-import configparser
+#import configparser
 import snowflake.connector
 import pandas as pd
 import streamlit as st
 
 
-config = configparser.ConfigParser()
-config.read('config.ini')
+#config = configparser.ConfigParser()
+#config.read('config.ini')
 
-# value = config['SectionName']['VariableName'] 
-c_sf_account = config.get('Snowflake', 'account')
-c_sf_username = config.get('Snowflake', 'username')
-c_sf_password = config.get('Snowflake', 'password')
-c_sf_database = config.get('Snowflake', 'database')
-c_sf_warehouse = config.get('Snowflake', 'warehouse')
+c_sf_account = st.secrets.db_credentials.account
+c_sf_username = st.secrets.db_credentials.username
+c_sf_password = st.secrets.db_credentials.password
+c_sf_database = st.secrets.db_credentials.database
+c_sf_warehouse = st.secrets.db_credentials.warehouse
 
 
 conn = snowflake.connector.connect(
