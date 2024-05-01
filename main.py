@@ -2,6 +2,8 @@
 import snowflake.connector
 import pandas as pd
 import streamlit as st
+from streamlit_folium import folium_static
+import folium
 
 
 #config = configparser.ConfigParser()
@@ -34,6 +36,30 @@ cursor.execute(query)
 # Fetch results
 results = cursor.fetchall()
 
-df = pd.DataFrame(results, columns=[desc[0] for desc in cursor.description])
+data = pd.DataFrame(results, columns=[desc[0] for desc in cursor.description])
 
-st.write(df)
+st.write(data)
+
+
+def create_map(data):
+    # Initialize the map centered at a location
+    m = folium.Map(location=[data['latitude'].mean(), data['longitude'].mean()], zoom_start=10)
+
+    # Add markers for each data point
+    for row in data:
+        latitude = row[1]
+        longitude = row[2]
+        geohash = row[0]
+        folium.Marker([latitude, longitude], popup=geohash).add_to(m)
+        #print(f"latitude = {latitude}, longitude = {longitude}, geohash = {geohash}")
+    
+    return m
+
+
+
+st.write('Map:')
+map_data = create_map(data)
+st.write(map_data)
+
+#map_data = create_map(data)
+#folium_static(map_data)
