@@ -2,18 +2,20 @@
 import snowflake.connector
 import pandas as pd
 import streamlit as st
-# from streamlit_folium import folium_static
+from streamlit_folium import folium_static
 import folium
 
 
 #config = configparser.ConfigParser()
 #config.read('config.ini')
 
-c_sf_account = st.secrets.Snowflake.account
-c_sf_username = st.secrets.Snowflake.username
-c_sf_password = st.secrets.Snowflake.password
-c_sf_database = st.secrets.Snowflake.database
-c_sf_warehouse = st.secrets.Snowflake.warehouse
+
+
+c_sf_account = st.secrets["Snowflake"]["account"]
+c_sf_username = st.secrets["Snowflake"]["username"]
+c_sf_password = st.secrets["Snowflake"]["password"]
+c_sf_database = st.secrets["Snowflake"]["database"]
+c_sf_warehouse = st.secrets["Snowflake"]["warehouse"]
 
 
 conn = snowflake.connector.connect(
@@ -40,29 +42,23 @@ data = pd.DataFrame(results, columns=[desc[0] for desc in cursor.description])
 
 st.write(data)
 
-# encode geohash from lat long 
-# geohash.encode(lat7itude = , longitude = , precision = 8)
-# returns 'qqguguga'
 
-# decode geohash to centerpoint lat long
-# geohash.decode('qqguguga')
-# returns (latitude, longitude)
-
-# bounding box of the geohash
-# geohash.bbox('qqu57zr2v') 
-# returns {'s': , 'w': , 'n': , 'e': , }
-
-
-# Upper_left_point = (N, W)
-# Upper_right_point = (N, E)
-# Lower_right_point = (S, E)
-# Lower_left_point = (S, W)
 
 
 # we need to draw the map
 
 
 # lat, long = geohash.decode(‘qqu57’) # get the center of the geohash
+
+latitude_index = int(data.columns.get_loc('LATITUDE'))
+longitude_index = int(data.columns.get_loc('LONGITUDE'))
+
+mean_latitude = data[latitude_index].mean()
+mean_longitude = data[longitude_index].mean()
+
+st.write(mean_latitude)
+st.write(mean_longitude)
+
 
 m = folium.Map(location=[data['latitude'].mean(), data['longitude'].mean()], zoom_start=5)
 
