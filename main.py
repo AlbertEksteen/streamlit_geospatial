@@ -39,57 +39,25 @@ cursor.execute(query)
 results = cursor.fetchall()
 
 data = pd.DataFrame(results, columns=[desc[0] for desc in cursor.description])
-
+st.write('Data:')
 st.write(data)
 
+def create_map(data):
 
+    mean_latitude = data[['LATITUDE']].mean()
+    mean_longitude = data[['LONGITUDE']].mean()
+    # Initialize the map centered at a location
+    m = folium.Map(location=[mean_latitude, mean_longitude], zoom_start=10, tiles="OpenStreetMap")
 
+    # Add markers for each data point
+    for row in data:
+        latitude = data[['LATITUDE']]
+        longitude = data[['LONGITUDE']]
+        geohash = data[['GEOHASH']]
+        folium.Marker([latitude, longitude], popup=geohash).add_to(m)
+    
+    return m
 
-# we need to draw the map
-
-
-# lat, long = geohash.decode(‘qqu57’) # get the center of the geohash
-
-#latitude_index = int(data.columns.get_loc('LATITUDE'))
-#longitude_index = int(data.columns.get_loc('LONGITUDE'))
-
-mean_latitude = data[['LATITUDE']].mean()
-mean_longitude = data[['LONGITUDE']].mean()
-
-st.write(mean_latitude)
-st.write(mean_longitude)
-
-# create a map canvas
-m = folium.Map(
-    location=[mean_latitude, mean_longitude], 
-    zoom_start=9.5,
-    tiles="CartoDB Positron"
-)
-
-# show the map
-st.write(m)
-
-
-
-#def create_map(data):
-#    # Initialize the map centered at a location
-#    m = folium.Map(location=[data['latitude'].mean(), data['longitude'].mean()], zoom_start=10)
-#
-#    # Add markers for each data point
-#    for row in data:
-#        latitude = row[1]
-#        longitude = row[2]
-#        geohash = row[0]
-#        folium.Marker([latitude, longitude], popup=geohash).add_to(m)
-#        #print(f"latitude = {latitude}, longitude = {longitude}, geohash = {geohash}")
-#    
-#    return m
-
-
-
-#st.write('Map:')
-#map_data = create_map(data)
-#st.write(map_data)
-
-#map_data = create_map(data)
-#folium_static(map_data)
+st.write('Map:')
+map_data = create_map(data)
+folium_static(map_data)
