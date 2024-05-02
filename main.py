@@ -50,11 +50,11 @@ st.write(data)
 
 # lat, long = geohash.decode(‘qqu57’) # get the center of the geohash
 
-latitude_index = int(data.columns.get_loc('LATITUDE'))
-longitude_index = int(data.columns.get_loc('LONGITUDE'))
+#latitude_index = int(data.columns.get_loc('LATITUDE'))
+#longitude_index = int(data.columns.get_loc('LONGITUDE'))
 
-mean_latitude = data[latitude_index].mean()
-mean_longitude = data[longitude_index].mean()
+mean_latitude = data[['LATITUDE']].mean()
+mean_longitude = data[['LONGITUDE']].mean()
 
 st.write(mean_latitude)
 st.write(mean_longitude)
