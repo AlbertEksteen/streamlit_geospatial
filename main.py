@@ -67,7 +67,7 @@ m = folium.Map(
 )
 
 # show the map
-m 
+st.write(m)
 
 
 
