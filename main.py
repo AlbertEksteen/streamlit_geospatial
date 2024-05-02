@@ -59,18 +59,15 @@ mean_longitude = data[['LONGITUDE']].mean()
 st.write(mean_latitude)
 st.write(mean_longitude)
 
-
-#m = folium.Map(location=[data['latitude'].mean(), data['longitude'].mean()], zoom_start=5)
-
 # create a map canvas
-#m = folium.Map(
-#    location=[data['latitude'].mean(),data['longitude'].mean()], # set the center location of the map
-#    zoom_start=9.5,
-#    tiles="CartoDB Positron"
-#)
+m = folium.Map(
+    location=[mean_latitude, mean_longitude], 
+    zoom_start=9.5,
+    tiles="CartoDB Positron"
+)
 
 # show the map
-#m 
+m 
 
 
 
