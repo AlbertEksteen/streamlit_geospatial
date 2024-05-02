@@ -1,4 +1,4 @@
 #requirements.txt
 snowflake-connector-python
-streamlit_folium
+streamlit-folium
 folium
