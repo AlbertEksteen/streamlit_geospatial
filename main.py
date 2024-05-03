@@ -30,7 +30,7 @@ conn = snowflake.connector.connect(
 cursor = conn.cursor()
 
 
-query = "SELECT * FROM STREAMLIT.SPATIAL_DATA.GEOHASH_DATA"
+query = "SELECT GEOHASH, LATITUDE, LONGITUDE FROM STREAMLIT.SPATIAL_DATA.GEOHASH_DATA"
 
 # Execute query
 cursor.execute(query)
@@ -50,13 +50,14 @@ def create_map(data):
     m = folium.Map(location=[mean_latitude, mean_longitude], zoom_start=10, tiles="OpenStreetMap")
 
     # Add markers for each data point
-    for row in data:
-        latitude = data[['LATITUDE']]
-        longitude = data[['LONGITUDE']]
-        geohash = data[['GEOHASH']]
+    for index, row in data.iterrows():
+        latitude = row['LATITUDE']
+        longitude = row['LONGITUDE']
+        geohash = row['GEOHASH']
         folium.Marker([latitude, longitude], popup=geohash).add_to(m)
     
     return m
+
 
 st.write('Map:')
 map_data = create_map(data)
