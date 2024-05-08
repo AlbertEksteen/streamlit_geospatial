@@ -76,7 +76,7 @@ def geohash_mean(geohash_value):
 def create_map(data):
     #mean_latitude, mean_longitude = geohash_mean()
     # Initialize the map centered at a location
-    m = folium.Map(zoom_start=6, tiles="OpenStreetMap")
+    m = folium.Map(zoom_start=8, tiles="OpenStreetMap")
 
     # Add markers for each data point
     for index, row in data.iterrows():
@@ -84,7 +84,7 @@ def create_map(data):
         qty = row['QTY']
         #folium.Marker([latitude, longitude], popup=geohash).add_to(m)
         #folium.Rectangle(bounds=edges, color="blue", fill_color="green", weight=2, popup=edges).add_to(m)
-        folium.Polygon(locations=edges, color="blue", weight=6, fill_color="red", fill_opacity=0.5, fill=True, popup=row['GEOHASH'], tooltip=f"{qty} Accidents",).add_to(m)
+        folium.Polygon(locations=edges, color="blue", weight=3, fill_color="red", fill_opacity=0.3, fill=True, popup=row['GEOHASH'], tooltip=f"{qty} Accidents",).add_to(m)
 
     return m
 
