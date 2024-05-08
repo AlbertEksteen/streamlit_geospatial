@@ -81,7 +81,7 @@ def create_map(data):
     # Add markers for each data point
     for index, row in data.iterrows():
         edges = geohash_bbox(row['GEOHASH'])
-        qty = row['qty']
+        qty = row['QTY']
         #folium.Marker([latitude, longitude], popup=geohash).add_to(m)
         #folium.Rectangle(bounds=edges, color="blue", fill_color="green", weight=2, popup=edges).add_to(m)
         folium.Polygon(locations=edges, color="blue", weight=6, fill_color="red", fill_opacity=0.5, fill=True, popup=row['GEOHASH'], tooltip=f"{qty} Accidents",).add_to(m)
