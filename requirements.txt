@@ -2,3 +2,4 @@
 snowflake-connector-python
 streamlit-folium
 folium
+Python-Geohash
