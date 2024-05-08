@@ -5,7 +5,6 @@ import streamlit as st
 from streamlit_folium import folium_static
 import folium
 import geohash
-from math import log10
 
 c_sf_account = st.secrets["Snowflake"]["account"]
 c_sf_username = st.secrets["Snowflake"]["username"]
@@ -22,20 +21,26 @@ conn = snowflake.connector.connect(
     database=c_sf_database
 )
 
+
+
+geohash_precision = st.slider("How precise do you want your Geohash to be?", 1, 8, 6)
+
+
 # Create a cursor object
 cursor = conn.cursor()
-query = 'SELECT GEOHASH, LATITUDE, LONGITUDE FROM STREAMLIT.SPATIAL_DATA.GEOHASH_DATA'
+query = f'''
+select  left(geohash,{geohash_precision}) as geohash, 
+        count(*) as qty 
+from    STREAMLIT.SPATIAL_DATA.GEOHASH_DATA 
+group   by all
+order   by qty desc
+'''
 cursor.execute(query)
 results = cursor.fetchall()
-
 
 data = pd.DataFrame(results, columns=[desc[0] for desc in cursor.description])
 st.write('Data:')
 st.write(data)
-
-
-print(geohash.bbox('9q8zp6z4mwvg'))
-
 
 
 def geohash_bbox(geohash_value):
@@ -54,26 +59,36 @@ def geohash_bbox(geohash_value):
 
     return edges
 
-print(geohash_bbox('9q8zp6z4'))
+def geohash_mean(geohash_value):
+    bbox_values = geohash.bbox(geohash_value)
+    W = bbox_values["w"]
+    E = bbox_values["e"]
+    N = bbox_values["n"]
+    S = bbox_values["s"]
 
-def create_map(data, precision):
-    mean_latitude = data[['LATITUDE']].mean()
-    mean_longitude = data[['LONGITUDE']].mean()
+    mean_latitude =  (N + S)
+    mean_longitude = (E + W)
+    edges = [mean_latitude, mean_longitude]
+
+    return edges
+
+
+def create_map(data):
+    #mean_latitude, mean_longitude = geohash_mean()
     # Initialize the map centered at a location
-    m = folium.Map(location=[mean_latitude, mean_longitude], zoom_start=18, tiles="OpenStreetMap")
+    m = folium.Map(zoom_start=6, tiles="OpenStreetMap")
 
     # Add markers for each data point
     for index, row in data.iterrows():
-        latitude = row['LATITUDE']
-        longitude = row['LONGITUDE']
-        edges = geohash_bbox(row['GEOHASH'][:precision])
+        edges = geohash_bbox(row['GEOHASH'])
+        qty = row['qty']
         #folium.Marker([latitude, longitude], popup=geohash).add_to(m)
         #folium.Rectangle(bounds=edges, color="blue", fill_color="green", weight=2, popup=edges).add_to(m)
-        folium.Polygon(locations=edges, color="blue", weight=6, fill_color="red", fill_opacity=0.5, fill=True, popup=row['GEOHASH'][:precision], tooltip="Qty Accidents",).add_to(m)
+        folium.Polygon(locations=edges, color="blue", weight=6, fill_color="red", fill_opacity=0.5, fill=True, popup=row['GEOHASH'], tooltip=f"{qty} Accidents",).add_to(m)
 
     return m
 
 
 st.write('Map:')
-map_data = create_map(data, 6)
+map_data = create_map(data)
 folium_static(map_data)
