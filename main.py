@@ -49,8 +49,8 @@ def geohash_bbox(geohash_value):
     upper_right = (N, E)
     lower_right = (S, E)
     lower_left = (S, W)
-    #edges = [upper_left, upper_right, lower_right, lower_left]
-    edges = [upper_left, lower_right]
+    edges = [upper_left, upper_right, lower_right, lower_left]
+    #edges = [upper_left, lower_right]
 
     return edges
 
@@ -60,7 +60,7 @@ def create_map(data, precision):
     mean_latitude = data[['LATITUDE']].mean()
     mean_longitude = data[['LONGITUDE']].mean()
     # Initialize the map centered at a location
-    m = folium.Map(location=[mean_latitude, mean_longitude], zoom_start=10, tiles="OpenStreetMap")
+    m = folium.Map(location=[mean_latitude, mean_longitude], zoom_start=18, tiles="OpenStreetMap")
 
     # Add markers for each data point
     for index, row in data.iterrows():
@@ -68,8 +68,9 @@ def create_map(data, precision):
         longitude = row['LONGITUDE']
         edges = geohash_bbox(row['GEOHASH'][:precision])
         #folium.Marker([latitude, longitude], popup=geohash).add_to(m)
-        folium.Rectangle(bounds=edges, color="blue", fill_color="green", weight=1, popup=edges).add_to(m)
-    
+        #folium.Rectangle(bounds=edges, color="blue", fill_color="green", weight=2, popup=edges).add_to(m)
+        folium.Polygon(locations=edges, color="blue", weight=6, fill_color="red", fill_opacity=0.5, fill=True, popup=row['GEOHASH'][:precision], tooltip="Qty Accidents",).add_to(m)
+
     return m
 
 
