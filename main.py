@@ -21,6 +21,8 @@ conn = snowflake.connector.connect(
     database=c_sf_database
 )
 
+st.set_page_config(layout="wide")
+
 geohash_precision = st.slider(
     label = "How precise do you want your Geohash to be?", 
     min_value = 1, 
@@ -95,7 +97,7 @@ def geohash_mean(geohash_value):
 def create_map(data):
     center_lat = 34.0212250625
     center_lon = -118.2293702375
-    m = folium.Map(location=[center_lat, center_lon], tiles="OpenStreetMap", zoom_start=11)
+    m = folium.Map(location=[center_lat, center_lon], tiles="cartodbpositron", zoom_start=11) # cartodbpositron #OpenStreetMap
 
     # Add markers for each data point
     for index, row in data.iterrows():
