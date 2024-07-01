@@ -33,20 +33,23 @@ with raw_data as (
 select  datetime, 
         latitude, 
         longitude,
-        left(GeoHash,6) as geohash
-from    streamlit.spatial_data.geohash_data)
+        left(GeoHash,{geohash_precision}) as geohash
+from    streamlit.spatial_data.geohash_data
+)
 , geohash_data as (
-select  left(geohash,6) as geohash,
+select  left(geohash,{geohash_precision}) as geohash,
         count(*) as qty
 from    streamlit.spatial_data.geohash_data
-group   by left(geohash,6)
-having  count(*) > 1000)
+group   by left(geohash,{geohash_precision})
+having  count(*) > 1000
+)
 select  distinct
         a.geohash,
         b.qty
 from    raw_data as a
 join    geohash_data as b on b.geohash = a.geohash
 '''
+
 cursor.execute(query)
 results = cursor.fetchall()
 
