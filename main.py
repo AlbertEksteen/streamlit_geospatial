@@ -34,14 +34,14 @@ select  Start_Time as datetime,
         Start_Lat as latitude, 
         Start_Lng as longitude,
         left(GeoHash,{geohash_precision}) as geohash
-from    [spatial_data].[dbo].[Accidents_All]
+from    spatial_data.dbo.Accidents_All
 where   County = 'Los Angeles'
 )
 
 , geohash_data as (
 select  left(geohash,{geohash_precision}) as geohash,
         count(*) as qty
-from    [spatial_data].[dbo].[Accidents_All]
+from    spatial_data.dbo.Accidents_All
 where   County = 'Los Angeles'
 group   by left(geohash,{geohash_precision})
 having	count(*) > 1000
@@ -93,8 +93,9 @@ def geohash_mean(geohash_value):
 def create_map(data):
     center_lat = 34.0212250625
     center_lon = -118.2293702375
-    m = folium.Map(location=[center_lat, center_lon], tiles="OpenStreetMap", zoom_start=12)
+    m = folium.Map(location=[center_lat, center_lon], tiles="OpenStreetMap", zoom_start=11)
 
+    # Add markers for each data point
     for index, row in data.iterrows():
         edges = geohash_bbox(row['GEOHASH'])
         qty = row['QTY']
