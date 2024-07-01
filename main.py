@@ -21,33 +21,37 @@ conn = snowflake.connector.connect(
     database=c_sf_database
 )
 
+geohash_precision = st.slider(
+    label = "How precise do you want your Geohash to be?", 
+    min_value = 1, 
+    max_value = 8, 
+    value = 6,
+    step = 1
+    )
+
+geohash_top_n_rows = st.slider(
+    label = "How many clusters do you want to see?", 
+    min_value = 1, 
+    max_value = 50, 
+    value = 10,
+    step = 5
+    )
 
 
-geohash_precision = st.slider("How precise do you want your Geohash to be?", 1, 8, 6)
-
-
-# Create a cursor object
 cursor = conn.cursor()
 query = f'''
-with raw_data as (
-select  datetime, 
-        latitude, 
-        longitude,
-        left(GeoHash,{geohash_precision}) as geohash
-from    streamlit.spatial_data.geohash_data
-)
-, geohash_data as (
-select  left(geohash,{geohash_precision}) as geohash,
+with geohash_data as (
+select  top {geohash_top_n_rows}
+		left(geohash,{geohash_precision}) as geohash,
         count(*) as qty
 from    streamlit.spatial_data.geohash_data
 group   by left(geohash,{geohash_precision})
-having  count(*) > 1000
+order   by qty desc
 )
 select  distinct
-        a.geohash,
+        b.geohash,
         b.qty
-from    raw_data as a
-join    geohash_data as b on b.geohash = a.geohash
+from    geohash_data as b
 '''
 
 cursor.execute(query)
@@ -97,8 +101,6 @@ def create_map(data):
     for index, row in data.iterrows():
         edges = geohash_bbox(row['GEOHASH'])
         qty = row['QTY']
-        #folium.Marker([latitude, longitude], popup=geohash).add_to(m)
-        #folium.Rectangle(bounds=edges, color="blue", fill_color="green", weight=2, popup=edges).add_to(m)
         folium.Polygon(locations=edges, color="blue", weight=3, fill_color="red", fill_opacity=0.3, fill=True, popup=row['GEOHASH'], tooltip=f"{qty} Accidents",).add_to(m)
 
     return m
