@@ -34,7 +34,7 @@ geohash_precision = st.slider(
 geohash_top_n_rows = st.slider(
     label = "How many clusters do you want to see?", 
     min_value = 0, 
-    max_value = 50, 
+    max_value = 1000, 
     value = 10,
     step = 5
     )
