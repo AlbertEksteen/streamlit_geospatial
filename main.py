@@ -34,23 +34,23 @@ select  Start_Time as datetime,
         Start_Lat as latitude, 
         Start_Lng as longitude,
         left(GeoHash,{geohash_precision}) as geohash
-from	[spatial_data].[dbo].[Accidents_All]
-where	County = 'Los Angeles'
+from    [spatial_data].[dbo].[Accidents_All]
+where   County = 'Los Angeles'
 )
 
 , geohash_data as (
 select  left(geohash,{geohash_precision}) as geohash,
         count(*) as qty
-from	[spatial_data].[dbo].[Accidents_All]
-where	County = 'Los Angeles'
+from    [spatial_data].[dbo].[Accidents_All]
+where   County = 'Los Angeles'
 group   by left(geohash,{geohash_precision})
 having	count(*) > 1000
 )
 select  distinct
         a.geohash,
         b.qty
-from	raw_data as a
-join	geohash_data as b on b.geohash = a.geohash
+from    raw_data as a
+join    geohash_data as b on b.geohash = a.geohash
 '''
 cursor.execute(query)
 results = cursor.fetchall()
