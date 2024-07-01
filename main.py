@@ -74,11 +74,10 @@ def geohash_mean(geohash_value):
 
 
 def create_map(data):
-    #mean_latitude, mean_longitude = geohash_mean()
-    # Initialize the map centered at a location
-    m = folium.Map(zoom_start=8, tiles="OpenStreetMap")
+    center_lat = 34.0212250625
+    center_lon = -118.2293702375
+    m = folium.Map(location=[center_lat, center_lon], tiles="OpenStreetMap", zoom_start=12)
 
-    # Add markers for each data point
     for index, row in data.iterrows():
         edges = geohash_bbox(row['GEOHASH'])
         qty = row['QTY']
