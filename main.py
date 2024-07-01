@@ -103,7 +103,7 @@ def create_map(data):
     for index, row in data.iterrows():
         edges = geohash_bbox(row['GEOHASH'])
         qty = row['QTY']
-        folium.Polygon(locations=edges, color="blue", weight=3, fill_color="red", fill_opacity=0.3, fill=True, popup=row['GEOHASH'], tooltip=f"{qty} Accidents",).add_to(m)
+        folium.Polygon(locations=edges, color="blue", weight=1, fill_color="red", fill_opacity=0.5, fill=True, popup=row['GEOHASH'], tooltip=f"{qty} Accidents",).add_to(m)
 
     return m
 
